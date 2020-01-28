@@ -34,7 +34,7 @@ interface ApiArgs {
 
 }
 
-const DEFAULT_HOST = 'http://localhost:8080';
+export const DEFAULT_HOST = 'http://localhost:8080';
 
 export function api(
 	{
@@ -56,12 +56,13 @@ export function api(
 		url += '?' + buildArgs(args);
 	}
 	let isSuccess = false;
-	fetch(url, init).then(res => res.json()).then((response) => {
+	fetch(url, init).then(
+		res => res.json()
+	).then((response) => {
 		isSuccess = true;
 		if (response.code > 400) {
 			errCallback(response)
 		}
-
 		callback(response)
 	}).catch((err) => {
 		if (!isSuccess) {

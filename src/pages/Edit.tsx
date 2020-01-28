@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import {observer} from "mobx-react";
-import {getArticleManage, loadEditContentByName} from "../features/ArticleManage";
-import {apiAsync, HTTP_REQUEST_METHODS} from "../utils/utils";
+import {getArticleManage, loadEditContentById} from "../features/ArticleManage";
+import {apiAsync, DEFAULT_HOST, HTTP_REQUEST_METHODS} from "../utils/utils";
 import {history} from "../history";
 import {useParams} from 'react-router-dom'
 
@@ -27,23 +27,35 @@ export const EditPage: React.FC = () => {
 }
 export const Edit: React.FC<EditProps> = observer(
 	() => {
-		let {name} = useParams();
+		let ws: WebSocket;
+		let {id} = useParams();
+		let article = getArticleManage().currentEditArticle;
 		let [tab, changeTab] = useState<("write" | "preview")>("write");
-		let staticContent = getArticleManage().currentEditArticle.content;
-		let [content, ChangeContent] = useState(staticContent);
+		let [content, _changeContent] = useState(article.content);
+		let [name, changeName] = useState(article.name)
 		useEffect(() => {
-			ChangeContent(staticContent);
-			loadEditContentByName(name as string);
-		}, [staticContent, name])
+			_changeContent(article.content);
+			changeName(article.name);
+			loadEditContentById(id as string);
+		}, [article.content, id, name])
+		useEffect(() => {
+			ws = new WebSocket(`ws://${DEFAULT_HOST}/writer/ws`);
+			ws.onopen = () => {
 
+			}
+		}, [])
+		const changeContent = (input:string) => {
+			_changeContent(input)
+			ws.send(JSON.stringify({id: article.id, type: 'POST_CONTENT', content: input}))
+		}
 		return <div>
 			<div>
-				<input type="text" value={name}/>
+				<input type="text" value={name} onChange={(e) => {
+					changeName(e.currentTarget.value);
+				}}/>
 			</div>
 			<ReactMde
-				onChange={input =>
-					ChangeContent(input)
-				}
+				onChange={changeContent}
 				onTabChange={(tab) => {
 					changeTab(tab);
 				}}
@@ -58,10 +70,10 @@ export const Edit: React.FC<EditProps> = observer(
 			<button onClick={() => {
 				console.log(history);
 				apiAsync({
-					router: `/writer/draft/${name}`,
+					router: `/writer/draft/${id}`,
 					method: HTTP_REQUEST_METHODS.PATCH,
 					body: {
-						name: name,
+						name: id,
 						content: content
 					}
 				})

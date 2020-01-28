@@ -52,8 +52,11 @@ export async function newArticle() {
 }
 
 export async function loadArticleList() {
-	getArticleManage().list = (await apiAsync({router: "/writer/drafts"})).payload.list;
-
+	try {
+		getArticleManage().list = (await apiAsync({router: "/writer/drafts"})).payload.list;
+	}catch (e) {
+		console.log(e)
+	}
 }
 
 export function authAsAdmin() {
