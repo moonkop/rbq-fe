@@ -7,6 +7,15 @@ import {apiAsync, HTTP_REQUEST_METHODS} from "../utils/utils";
 import {history} from "../history";
 import {useParams} from 'react-router-dom'
 
+import {Converter} from "showdown";
+
+const converter = new Converter({
+	tables: true,
+	simplifiedAutoLink: true,
+	strikethrough: true,
+	tasklists: true
+})
+
 interface EditProps {
 
 }
@@ -25,7 +34,8 @@ export const Edit: React.FC<EditProps> = observer(
 		useEffect(() => {
 			ChangeContent(staticContent);
 			loadEditContentByName(name as string);
-		}, [staticContent,name])
+		}, [staticContent, name])
+
 		return <div>
 			<div>
 				<input type="text" value={name}/>
@@ -39,6 +49,9 @@ export const Edit: React.FC<EditProps> = observer(
 				}}
 				selectedTab={tab}
 				value={content}
+				generateMarkdownPreview={(content) => {
+					return Promise.resolve(converter.makeHtml(content))
+				}}
 			>
 
 			</ReactMde>
