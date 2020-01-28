@@ -1,27 +1,11 @@
 import React, {Fragment, useEffect} from 'react'
 import {api, apiAsync, HTTP_REQUEST_METHODS} from "../utils/utils";
-import {observable} from "mobx";
 import {observer} from "mobx-react";
+// @ts-ignore
+import {ReactMde} from "react-mde";
+import {Article} from "../types/Article";
+import {getArticleManage, goToEdit} from "../features/ArticleManage";
 
-class ArticleList {
-	@observable list: Array<Article> = [];
-}
-
-const articleList: ArticleList = new ArticleList();
-
-interface Article {
-	name: string,
-	content: string,
-	modified: string,
-	created: string,
-	comments: Array<Comment>,
-}
-
-interface Comment {
-	created: string,
-	content: string,
-	author: string,
-}
 
 export function ArticleCard(article: Article) {
 	return <div className='article-card'>
@@ -47,7 +31,7 @@ export function ArticleCard(article: Article) {
 			<button>
 				view
 			</button>
-			<button>
+			<button onClick={goToEdit.bind(null, article)}>
 				edit
 			</button>
 		</div>
@@ -55,19 +39,20 @@ export function ArticleCard(article: Article) {
 }
 
 let index = 0;
+
 export async function newArticle() {
 	await apiAsync({
 		router: "/writer/draft/new",
 		method: HTTP_REQUEST_METHODS.POST,
 		body: {
-			name:'newDraft'+index++
+			name: 'newDraft' + index++
 		}
 	})
 	await loadArticleList();
 }
 
 export async function loadArticleList() {
-	articleList.list = (await apiAsync({router: "/writer/drafts"})).payload.list;
+	getArticleManage().list = (await apiAsync({router: "/writer/drafts"})).payload.list;
 
 }
 
@@ -80,8 +65,12 @@ export function authAsAdmin() {
 		}
 	})
 }
+export const ArticleListPage:React.FC=()=><div>
+	<ArticleList>
 
-export const Home: React.FC = observer(() => {
+	</ArticleList>
+</div>
+export const ArticleList: React.FC = observer(() => {
 		useEffect(() => {
 			loadArticleList();
 		}, [])
@@ -93,7 +82,7 @@ export const Home: React.FC = observer(() => {
 					</button>
 				</div>
 				{
-					articleList.list.map(ArticleCard)
+					getArticleManage().list.map(ArticleCard)
 				}
 
 			</Fragment>
