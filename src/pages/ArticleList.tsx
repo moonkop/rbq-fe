@@ -28,7 +28,7 @@ export class ArticleList extends React.Component<ArticleListProps> {
 		this.injected.articles.loadArticleList();
 	}
 
-	renderCard(article: Article) {
+	renderCard=(article: Article) =>{
 		return <div className='article-card'>
 			<div className='content'>
 				{article.name}
@@ -50,7 +50,7 @@ export class ArticleList extends React.Component<ArticleListProps> {
 					delete
 				</button>
 				<button>
-					view../stores/ArticleManage
+					view
 				</button>
 				<button onClick={this.injected.articles.goToEdit.bind(null, article)}>
 					edit

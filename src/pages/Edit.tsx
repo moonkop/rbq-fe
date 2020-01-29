@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import {observer} from "mobx-react";
-import {Articles, getArticleManage, loadEditContentById} from "../stores/ArticleManage";
-import {apiAsync, DEFAULT_HOST, HTTP_REQUEST_METHODS} from "../utils/utils";
+import {inject, observer} from "mobx-react";
 import {history} from "../history";
-import {useParams} from 'react-router-dom'
 
 import {Converter} from "showdown";
 import {Article} from "../types/Article";
+import {RootStore} from "../stores";
+import {Edit as IEdit} from "../stores/Edit";
+import {RouteComponentProps} from "react-router";
 
 const converter = new Converter({
 	tables: true,
@@ -17,88 +17,68 @@ const converter = new Converter({
 	tasklists: true
 })
 
-interface EditProps {
 
-}
-
-export const EditPage: React.FC = () => {
-	return <div>
-		<Edit article={getArticleManage().currentEditArticle}/>
-	</div>
-}
-export const Edit1 = observer(
-	() => {
-		let ws: WebSocket;
-		let {id} = useParams();
-		let article = getArticleManage().currentEditArticle;
-		let [tab, changeTab] = useState<("write" | "preview")>("write");
-		let [content, _changeContent] = useState(article.content);
-		let [name, changeName] = useState(article.name)
-		useEffect(() => {
-			_changeContent(article.content);
-			changeName(article.name);
-			loadEditContentById(id as string);
-		}, [article.content, id, name])
-		useEffect(() => {
-			ws = new WebSocket(`ws://${DEFAULT_HOST}/writer/ws`);
-			ws.onopen = () => {
-
-			}
-		}, [])
-		const changeContent = (input: string) => {
-			_changeContent(input)
-			ws.send(JSON.stringify({id: article.id, type: 'POST_CONTENT', content: input}))
-		}
-		return;
-	}
-)
 declare type ReactMdeTabType = ("write" | "preview")
-interface EditProps {
+
+interface EditParams {
+	id: string;
+}
+
+interface EditProps extends RouteComponentProps<EditParams> {
 	article: Article;
 }
-interface EditStates {
-	tab:ReactMdeTabType,
-	content:string,
-	name:string,
+
+interface EditInjectedProps extends EditProps {
+	edit: IEdit;
 }
+
+interface EditStates {
+	tab: ReactMdeTabType,
+}
+
+@inject((rootStore: RootStore) => ({
+	edit: rootStore.edit
+}))
 @observer
 export class Edit extends React.Component<EditProps, EditStates> {
 	state = {
 		tab: "write" as ReactMdeTabType,
-		content: '',
-		name: ''
 	}
 
-	componentWillReceiveProps(nextProps: Readonly<any>, nextContext: any): void {
-
+	get injected() {
+		return this.props as EditInjectedProps
 	}
 
-	changeName = (name:string) => {
-		this.setState({name})
-
+	componentDidMount() {
+		this.injected.edit.loadEdit(this.props.match.params.id);
 	}
-	changeTab = (tab:ReactMdeTabType) => {
+
+	componentDidUpdate(prevProps: Readonly<EditProps>, prevState: Readonly<EditStates>, snapshot?: any): void {
+	}
+
+	changeTab = (tab: ReactMdeTabType) => {
 		this.setState({tab})
-
-	}
-	changeContent = () => {
-
 	}
 
 	render() {
+		console.log("Edit rendered", this);
+		const {edit} = this.injected;
+
 		return <div>
 			<div>
-				<input type="text" value={this.state.name} onChange={(e) => {
-					this.changeName(e.currentTarget.value);
+				<input type="text" value={edit.article.name} onChange={(e) => {
+					edit.article.name = e.currentTarget.value;
 				}}/>
 			</div>
 			<ReactMde
-				onChange={this.changeContent}
+				onChange={(mde) => {
+					edit.article.content = mde;
+				}}
 				onTabChange={(tab) => {
 					this.changeTab(tab);
 				}}
 				selectedTab={this.state.tab}
-				value={this.state.content}
+				value={edit.article.content}
 				generateMarkdownPreview={(content) => {
 					return Promise.resolve(converter.makeHtml(content))
 				}}
@@ -107,14 +87,7 @@ export class Edit extends React.Component<EditProps, EditStates> {
 			</ReactMde>
 			<button onClick={() => {
 				console.log(history);
-				apiAsync({
-					router: `/writer/draft/${this.props.article.id}`,
-					method: HTTP_REQUEST_METHODS.PATCH,
-					body: {
-						name: this.props.article.id,
-						content: this.props.article.content
-					}
-				})
+				this.injected.edit.save();
 			}}>
 				save
 			</button>
