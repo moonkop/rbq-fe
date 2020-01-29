@@ -2,12 +2,13 @@ import React, {useEffect, useState} from "react";
 import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import {observer} from "mobx-react";
-import {getArticleManage, loadEditContentById} from "../features/ArticleManage";
+import {Articles, getArticleManage, loadEditContentById} from "../stores/ArticleManage";
 import {apiAsync, DEFAULT_HOST, HTTP_REQUEST_METHODS} from "../utils/utils";
 import {history} from "../history";
 import {useParams} from 'react-router-dom'
 
 import {Converter} from "showdown";
+import {Article} from "../types/Article";
 
 const converter = new Converter({
 	tables: true,
@@ -22,10 +23,10 @@ interface EditProps {
 
 export const EditPage: React.FC = () => {
 	return <div>
-		<Edit/>
+		<Edit article={getArticleManage().currentEditArticle}/>
 	</div>
 }
-export const Edit: React.FC<EditProps> = observer(
+export const Edit1 = observer(
 	() => {
 		let ws: WebSocket;
 		let {id} = useParams();
@@ -44,23 +45,60 @@ export const Edit: React.FC<EditProps> = observer(
 
 			}
 		}, [])
-		const changeContent = (input:string) => {
+		const changeContent = (input: string) => {
 			_changeContent(input)
 			ws.send(JSON.stringify({id: article.id, type: 'POST_CONTENT', content: input}))
 		}
+		return;
+	}
+)
+declare type ReactMdeTabType = ("write" | "preview")
+interface EditProps {
+	article: Article;
+}
+interface EditStates {
+	tab:ReactMdeTabType,
+	content:string,
+	name:string,
+}
+@observer
+export class Edit extends React.Component<EditProps, EditStates> {
+	state = {
+		tab: "write" as ReactMdeTabType,
+		content: '',
+		name: ''
+	}
+
+	componentWillReceiveProps(nextProps: Readonly<any>, nextContext: any): void {
+
+	}
+
+	changeName = (name:string) => {
+		this.setState({name})
+
+	}
+	changeTab = (tab:ReactMdeTabType) => {
+		this.setState({tab})
+
+	}
+	changeContent = () => {
+
+	}
+
+	render() {
 		return <div>
 			<div>
-				<input type="text" value={name} onChange={(e) => {
-					changeName(e.currentTarget.value);
+				<input type="text" value={this.state.name} onChange={(e) => {
+					this.changeName(e.currentTarget.value);
 				}}/>
 			</div>
 			<ReactMde
-				onChange={changeContent}
+				onChange={this.changeContent}
 				onTabChange={(tab) => {
-					changeTab(tab);
+					this.changeTab(tab);
 				}}
-				selectedTab={tab}
-				value={content}
+				selectedTab={this.state.tab}
+				value={this.state.content}
 				generateMarkdownPreview={(content) => {
 					return Promise.resolve(converter.makeHtml(content))
 				}}
@@ -70,11 +108,11 @@ export const Edit: React.FC<EditProps> = observer(
 			<button onClick={() => {
 				console.log(history);
 				apiAsync({
-					router: `/writer/draft/${id}`,
+					router: `/writer/draft/${this.props.article.id}`,
 					method: HTTP_REQUEST_METHODS.PATCH,
 					body: {
-						name: id,
-						content: content
+						name: this.props.article.id,
+						content: this.props.article.content
 					}
 				})
 			}}>
@@ -82,4 +120,4 @@ export const Edit: React.FC<EditProps> = observer(
 			</button>
 		</div>;
 	}
-)
+}

@@ -1,94 +1,80 @@
-import React, {Fragment, useEffect} from 'react'
-import {api, apiAsync, HTTP_REQUEST_METHODS} from "../utils/utils";
-import {observer} from "mobx-react";
+import React, {Fragment} from 'react'
+import {api, HTTP_REQUEST_METHODS} from "../utils/utils";
+import {inject, observer} from "mobx-react";
 // @ts-ignore
 import {ReactMde} from "react-mde";
 import {Article} from "../types/Article";
-import {getArticleManage, goToEdit} from "../features/ArticleManage";
+import {RootStore} from "../stores";
+import {Articles} from "../stores/Articles";
 
+interface ArticleListProps {
 
-export function ArticleCard(article: Article) {
-	return <div className='article-card'>
-		<div className='content'>
-			{article.name}
-			{article.content}
-			{article.modified}
-			{article.created}
-
-		</div>
-		<div className='actions'>
-			<button onClick={() => {
-				api({
-					router: `/writer/draft/${article.name.replace('.md', '')}`,
-					method: HTTP_REQUEST_METHODS.DELETE,
-					callback: () => {
-						loadArticleList();
-					}
-				})
-			}}>
-				delete
-			</button>
-			<button>
-				view
-			</button>
-			<button onClick={goToEdit.bind(null, article)}>
-				edit
-			</button>
-		</div>
-	</div>;
+}
+interface ArticleListInjectedProps extends ArticleListProps {
+	articles: Articles
 }
 
-let index = 0;
+@inject((stores: RootStore) => ({
+	articles: stores.articles
+}))
+@observer
+export class ArticleList extends React.Component<ArticleListProps> {
 
-export async function newArticle() {
-	await apiAsync({
-		router: "/writer/draft/new",
-		method: HTTP_REQUEST_METHODS.POST,
-		body: {
-			name: 'newDraft' + index++
-		}
-	})
-	await loadArticleList();
-}
-
-export async function loadArticleList() {
-	try {
-		getArticleManage().list = (await apiAsync({router: "/writer/drafts"})).payload.list;
-	}catch (e) {
-		console.log(e)
+	get injected() {
+		return this.props as ArticleListInjectedProps;
 	}
-}
 
-export function authAsAdmin() {
-	return apiAsync({
-		router: "/user/adminLogin",
-		method: HTTP_REQUEST_METHODS.POST,
-		body: {
-			password: '123'
-		}
-	})
-}
-export const ArticleListPage:React.FC=()=><div>
-	<ArticleList>
+	componentDidMount() {
+		this.injected.articles.loadArticleList();
+	}
 
-	</ArticleList>
-</div>
-export const ArticleList: React.FC = observer(() => {
-		useEffect(() => {
-			loadArticleList();
-		}, [])
+	renderCard(article: Article) {
+		return <div className='article-card'>
+			<div className='content'>
+				{article.name}
+				{article.content}
+				{article.modified}
+				{article.created}
+
+			</div>
+			<div className='actions'>
+				<button onClick={() => {
+					api({
+						router: `/writer/draft/${article.name.replace('.md', '')}`,
+						method: HTTP_REQUEST_METHODS.DELETE,
+						callback: () => {
+							this.injected.articles.loadArticleList();
+						}
+					})
+				}}>
+					delete
+				</button>
+				<button>
+					view../stores/ArticleManage
+				</button>
+				<button onClick={this.injected.articles.goToEdit.bind(null, article)}>
+					edit
+				</button>
+			</div>
+		</div>;
+
+	}
+
+	render() {
 		return (
 			<Fragment>
 				<div>
-					<button onClick={newArticle}>
+					<button onClick={this.injected.articles.newArticle}>
 						new
 					</button>
 				</div>
 				{
-					getArticleManage().list.map(ArticleCard)
+					this.injected.articles.list.map(this.renderCard)
 				}
 
 			</Fragment>
 		)
+
+
 	}
-)
+}
