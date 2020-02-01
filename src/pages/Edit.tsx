@@ -3,19 +3,11 @@ import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import {inject, observer} from "mobx-react";
 import {history} from "../history";
-
-import {Converter} from "showdown";
 import {Article} from "../types/Article";
 import {RootStore} from "../stores";
-import {Edit as IEdit} from "../stores/Edit";
+import {Detail as IEdit} from "../stores/Detail";
 import {RouteComponentProps} from "react-router";
-
-const converter = new Converter({
-	tables: true,
-	simplifiedAutoLink: true,
-	strikethrough: true,
-	tasklists: true
-})
+import {converter} from "../utils/utils";
 
 
 declare type ReactMdeTabType = ("write" | "preview")
@@ -34,6 +26,7 @@ interface EditInjectedProps extends EditProps {
 
 interface EditStates {
 	tab: ReactMdeTabType,
+	preview: string,
 }
 
 @inject((rootStore: RootStore) => ({
@@ -43,14 +36,16 @@ interface EditStates {
 export class Edit extends React.Component<EditProps, EditStates> {
 	state = {
 		tab: "write" as ReactMdeTabType,
+		preview: ''
 	}
 
 	get injected() {
 		return this.props as EditInjectedProps
 	}
 
-	componentDidMount() {
-		this.injected.edit.loadEdit(this.props.match.params.id);
+	async componentDidMount() {
+		await this.injected.edit.loadEdit(this.props.match.params.id);
+		this.onGeneratePreview(this.injected.edit.article.content);
 	}
 
 	componentDidUpdate(prevProps: Readonly<EditProps>, prevState: Readonly<EditStates>, snapshot?: any): void {
@@ -58,6 +53,11 @@ export class Edit extends React.Component<EditProps, EditStates> {
 
 	changeTab = (tab: ReactMdeTabType) => {
 		this.setState({tab})
+	}
+	onGeneratePreview = (preview: string) => {
+		let html = converter.makeHtml(preview);
+		this.setState({preview: html})
+		return html;
 	}
 
 	render() {
@@ -71,8 +71,9 @@ export class Edit extends React.Component<EditProps, EditStates> {
 				}}/>
 			</div>
 			<ReactMde
-				onChange={(mde) => {
-					edit.article.content = mde;
+				onChange={(content) => {
+					edit.article.content = content;
+					this.onGeneratePreview(content)
 				}}
 				onTabChange={(tab) => {
 					this.changeTab(tab);
@@ -80,17 +81,19 @@ export class Edit extends React.Component<EditProps, EditStates> {
 				selectedTab={this.state.tab}
 				value={edit.article.content}
 				generateMarkdownPreview={(content) => {
-					return Promise.resolve(converter.makeHtml(content))
+					return Promise.resolve(this.state.preview)
 				}}
+				disablePreview={true}
 			>
-
 			</ReactMde>
+
 			<button onClick={() => {
 				console.log(history);
 				this.injected.edit.save();
 			}}>
 				save
 			</button>
+			<div dangerouslySetInnerHTML={{__html: this.state.preview}}></div>
 		</div>;
 	}
 }

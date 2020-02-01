@@ -1,0 +1,17 @@
+
+.articles{
+  .btn-new{
+
+  }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    .action{
+      font-size: 20px;
+      text-decoration: black underline;
+      cursor: pointer;
+    }
+  }
+}

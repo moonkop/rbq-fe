@@ -6,7 +6,7 @@ import {history} from "./history";
 import {LoginPage} from "./pages/Login";
 import { Provider } from 'mobx-react';
 import {rootStore} from './stores';
-import {ArticleList} from "./pages/ArticleList";
+import {ArticleAdmin} from "./pages/ArticleAdmin";
 import {Edit} from "./pages/Edit";
 
 export const App = () => (
@@ -15,7 +15,7 @@ export const App = () => (
 			<Navbar/>
 			<div className="container">
 				<Switch>
-					<Route path="/" component={ArticleList} exact/>
+					<Route path="/" component={ArticleAdmin} exact/>
 					<Route path="/edit/:id" component={Edit}/>
 					<Route path="/about" component={About}/>
 					<Route path="/login" component={LoginPage}/>

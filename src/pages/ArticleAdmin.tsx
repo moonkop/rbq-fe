@@ -1,15 +1,16 @@
-import React, {Fragment} from 'react'
-import {api, HTTP_REQUEST_METHODS} from "../utils/utils";
+import React from 'react'
+import {api, HTTP_REQUEST_METHODS} from "../utils/request";
 import {inject, observer} from "mobx-react";
-// @ts-ignore
-import {ReactMde} from "react-mde";
 import {Article} from "../types/Article";
 import {RootStore} from "../stores";
 import {Articles} from "../stores/Articles";
+import "./Articles.scss";
+import {converter} from "../utils/utils";
 
 interface ArticleListProps {
 
 }
+
 interface ArticleListInjectedProps extends ArticleListProps {
 	articles: Articles
 }
@@ -18,7 +19,7 @@ interface ArticleListInjectedProps extends ArticleListProps {
 	articles: stores.articles
 }))
 @observer
-export class ArticleList extends React.Component<ArticleListProps> {
+export class ArticleAdmin extends React.Component<ArticleListProps> {
 
 	get injected() {
 		return this.props as ArticleListInjectedProps;
@@ -28,33 +29,25 @@ export class ArticleList extends React.Component<ArticleListProps> {
 		this.injected.articles.loadArticleList();
 	}
 
-	renderCard=(article: Article) =>{
+	renderCard = (article: Article) => {
 		return <div className='article-card'>
-			<div className='content'>
+			<div className="brief">
 				{article.name}
-				{article.content}
 				{article.modified}
 				{article.created}
-
+			</div>
+			<div className='content' dangerouslySetInnerHTML={{__html: converter.makeHtml(article.content)}}>
 			</div>
 			<div className='actions'>
-				<button onClick={() => {
-					api({
-						router: `/writer/draft/${article.name.replace('.md', '')}`,
-						method: HTTP_REQUEST_METHODS.DELETE,
-						callback: () => {
-							this.injected.articles.loadArticleList();
-						}
-					})
-				}}>
+				<div className='action' onClick={() => {this.injected.articles.deleteArticle(article)}}>
 					delete
-				</button>
-				<button>
+				</div>
+				<div className='action' onClick={this.injected.articles.goToView.bind(null, article)}>
 					view
-				</button>
-				<button onClick={this.injected.articles.goToEdit.bind(null, article)}>
+				</div>
+				<div className='action' onClick={this.injected.articles.goToEdit.bind(null, article)}>
 					edit
-				</button>
+				</div>
 			</div>
 		</div>;
 
@@ -62,9 +55,9 @@ export class ArticleList extends React.Component<ArticleListProps> {
 
 	render() {
 		return (
-			<Fragment>
+			<div className='articles article-admin'>
 				<div>
-					<button onClick={this.injected.articles.newArticle}>
+					<button className='btn-new' onClick={()=>{this.injected.articles.newArticle()}}>
 						new
 					</button>
 				</div>
@@ -72,7 +65,7 @@ export class ArticleList extends React.Component<ArticleListProps> {
 					this.injected.articles.list.map(this.renderCard)
 				}
 
-			</Fragment>
+			</div>
 		)
 
 

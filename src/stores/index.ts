@@ -1,11 +1,11 @@
 import {Articles, articles} from "./Articles";
-import {Edit, edit} from "./Edit";
+import {Detail, detail} from "./Detail";
 
 export const rootStore = {
 	articles,
-	edit,
+	edit: detail,
 }
 export interface RootStore {
 	articles: Articles;
-	edit: Edit;
+	edit: Detail;
 }
