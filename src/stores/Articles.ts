@@ -5,32 +5,45 @@ import {history} from "../history";
 
 export class Articles {
 	@observable list: Article[] = [];
-	@observable currentEditArticle: Article = {id: '', content: '', name: '', comments: [], created: '', modified: ''}
+	@observable currentEditArticle: Article = {
+		id: '',
+		content: '',
+		name: '',
+		comments: [],
+		created: '',
+		modified: '',
+		tags: []
+	}
 	newIndex = 0;
-
+	tag: string | null = null;
 
 	async loadArticleList() {
+		let route = "/writer/drafts";
+		if (this.tag) {
+			route = `/writer/tags/${this.tag}`;
+		}
 		try {
-			articles.list = (await apiAsync({router: "/writer/drafts"})).payload.list;
+			articles.list = (await apiAsync({route: route})).payload.list;
 		} catch (e) {
 			console.log(e)
 		}
 	}
+
 	async newArticle() {
 		await apiAsync({
-			router: "/writer/draft/new",
+			route: "/writer/draft/new",
 			method: HTTP_REQUEST_METHODS.POST,
 			body: {
-				name: 'newDraft' + this.newIndex++
+				name: 'newDraft' + articles.newIndex++
 			}
 		})
-		await this.loadArticleList();
+		await articles.loadArticleList();
 	}
 
 
 	deleteArticle(article: Article) {
 		api({
-			router: `/writer/draft/${article.id}`,
+			route: `/writer/draft/${article.id}`,
 			method: HTTP_REQUEST_METHODS.DELETE,
 			callback: () => {
 				articles.loadArticleList();
@@ -43,18 +56,23 @@ export class Articles {
 		history.push('/edit/' + article.id);
 		articles.currentEditArticle = article;
 	}
+
 	async goToView(article: Article) {
 
 	}
 
 	authAsAdmin() {
 		return apiAsync({
-			router: "/user/adminLogin",
+			route: "/user/adminLogin",
 			method: HTTP_REQUEST_METHODS.POST,
 			body: {
 				password: '123'
 			}
 		})
+	}
+
+	loadByTag(tag: string) {
+		history.push('/tags/' + tag);
 	}
 }
 

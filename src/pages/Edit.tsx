@@ -5,7 +5,7 @@ import {inject, observer} from "mobx-react";
 import {history} from "../history";
 import {Article} from "../types/Article";
 import {RootStore} from "../stores";
-import {Detail as IEdit} from "../stores/Detail";
+import {Detail} from "../stores/Detail";
 import {RouteComponentProps} from "react-router";
 import {converter} from "../utils/utils";
 
@@ -21,7 +21,7 @@ interface EditProps extends RouteComponentProps<EditParams> {
 }
 
 interface EditInjectedProps extends EditProps {
-	edit: IEdit;
+	detail: Detail;
 }
 
 interface EditStates {
@@ -30,7 +30,7 @@ interface EditStates {
 }
 
 @inject((rootStore: RootStore) => ({
-	edit: rootStore.edit
+	detail: rootStore.detail
 }))
 @observer
 export class Edit extends React.Component<EditProps, EditStates> {
@@ -44,8 +44,8 @@ export class Edit extends React.Component<EditProps, EditStates> {
 	}
 
 	async componentDidMount() {
-		await this.injected.edit.loadEdit(this.props.match.params.id);
-		this.onGeneratePreview(this.injected.edit.article.content);
+		await this.injected.detail.loadEdit(this.props.match.params.id);
+		this.onGeneratePreview(this.injected.detail.article.content);
 	}
 
 	componentDidUpdate(prevProps: Readonly<EditProps>, prevState: Readonly<EditStates>, snapshot?: any): void {
@@ -62,34 +62,38 @@ export class Edit extends React.Component<EditProps, EditStates> {
 
 	render() {
 		console.log("Edit rendered", this);
-		const {edit} = this.injected;
+		const {detail} = this.injected;
 
 		return <div>
 			<div>
-				<input type="text" value={edit.article.name} onChange={(e) => {
-					edit.article.name = e.currentTarget.value;
+				<input type="text" value={detail.article.name} onChange={(e) => {
+					detail.article.name = e.currentTarget.value;
 				}}/>
 			</div>
 			<ReactMde
 				onChange={(content) => {
-					edit.article.content = content;
+					detail.article.content = content;
 					this.onGeneratePreview(content)
 				}}
 				onTabChange={(tab) => {
 					this.changeTab(tab);
 				}}
 				selectedTab={this.state.tab}
-				value={edit.article.content}
+				value={detail.article.content}
 				generateMarkdownPreview={(content) => {
 					return Promise.resolve(this.state.preview)
 				}}
 				disablePreview={true}
 			>
 			</ReactMde>
-
+			<input type="text" onChange={(e) => {
+				detail.article.tags = e.target.value.split(',');
+			}}
+			       value={detail.article.tags.join(',')}
+			/>
 			<button onClick={() => {
 				console.log(history);
-				this.injected.edit.save();
+				this.injected.detail.save();
 			}}>
 				save
 			</button>

@@ -24,7 +24,7 @@ interface Response {
 
 interface ApiArgs {
 	host?: string,
-	router?: string,
+	route?: string,
 	method?: HTTP_REQUEST_METHODS,
 	args?: any,
 	body?: any,
@@ -39,7 +39,7 @@ export const DEFAULT_HOST = 'http://localhost:8080';
 export function api(
 	{
 		host = DEFAULT_HOST,
-		router = '',
+		route = '',
 		method = HTTP_REQUEST_METHODS.GET,
 		args,
 		body,
@@ -51,8 +51,8 @@ export function api(
 	if (body) {
 		init.body = JSON.stringify(body);
 	}
-	let url = host + router;
-	if (args) {
+	let url = host + route;
+	if (args&&Object.keys(args)) {
 		url += '?' + buildArgs(args);
 	}
 	let isSuccess = false;
@@ -71,12 +71,12 @@ export function api(
 	});
 }
 
-export function apiAsync(args: ApiArgs):Promise<Response> {
+export function apiAsync(options: ApiArgs):Promise<Response> {
 	return new Promise(((resolve, reject) => {
 		api({
 			callback: resolve,
 			errCallback: reject,
-			...args
+			...options
 		})
 	}))
 }

@@ -1,37 +1,58 @@
-import React, {ChangeEvent} from "react";
+import React from "react";
+import {inject} from "mobx-react";
+import {RootStore} from "../stores";
+import {User} from "../stores/User"
 
-export const LoginPage: React.FC = () => {
-	return <div className='page-login'>
-		<Login/>
-	</div>
-};
+interface LoginProps {
 
+}
 
-const Login: React.FC = () => {
-	const [inputValue, setInputValue] = React.useState('');
+interface LoginState {
+	name: string;
+}
 
-	return <div>
-		<div>
-			<p>
-				(这里有很多不可告人的秘密)
-			</p>
-			<p>
-				来吧告诉我你是哪只？（或者我怎么称呼你？）
-			</p>
-		</div>
-		<input type="text" className='input-main' value={inputValue}
-		       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-			       setInputValue(event.target.value);
-		       }
-		       }/>
-		<div>你输入的是{inputValue}</div>
-		<button className='login-button' onClick={() => {
+interface LoginInjectedProps extends LoginProps {
+	login: User
+}
 
-		}}>
-			我要进去！
-		</button>
-		<div>
-			（不同的人进去看到的东西也不一样哦
-		</div>
-	</div>;
-};
+@inject((stores: RootStore) => ({
+	login: stores.user
+}))
+export class Login extends React.Component<LoginProps, LoginState> {
+	state = {
+		name: ''
+	}
+
+	get injected() {
+		return this.props as LoginInjectedProps;
+	}
+
+	handleLogin = () => {
+		this.injected.login.login(this.state.name);
+	};
+
+	render() {
+
+		return <div>
+			<div>
+				<p>
+					(这里有很多不可告人的秘密)
+				</p>
+				<p>
+					来吧告诉我你是哪只？（或者我怎么称呼你？）
+				</p>
+			</div>
+			<input type="text" className='input-main' value={this.state.name}
+			       onChange={(e) => {
+				       this.setState({name: e.target.value})
+			       }}/>
+
+			<button className='btn btn-login' onClick={this.handleLogin}>
+				出发~
+			</button>
+			<div>
+				（不同的人进去看到的东西也不一样哦
+			</div>
+		</div>;
+	}
+}

@@ -5,7 +5,7 @@ export const About: React.FC = () => {
   const history = useHistory()
 
   return (
-    <Fragment>
+    <div className="about animated  fadeInDown">
       <h1>About</h1>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas
@@ -16,6 +16,6 @@ export const About: React.FC = () => {
       <button type="button" className="btn" onClick={() => history.push('/')}>
         Go back
       </button>
-    </Fragment>
+    </div>
   )
 }
