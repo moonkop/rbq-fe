@@ -8,21 +8,23 @@ import {converter} from "../utils/utils";
 import dayjs from 'dayjs'
 import {RouteComponentProps} from "react-router";
 import {User} from "../stores/User";
+
 interface ArticleListParams {
 	tag: string;
 }
-interface ArticleListProps extends RouteComponentProps<ArticleListParams>{
+
+interface ArticleListProps extends RouteComponentProps<ArticleListParams> {
 
 }
 
 interface ArticleListInjectedProps extends ArticleListProps {
 	articles: Articles
-	user:User
+	user: User
 }
 
 @inject((stores: RootStore) => ({
 	articles: stores.articles,
-	user:stores.user,
+	user: stores.user,
 }))
 @observer
 export class ArticleAdmin extends React.Component<ArticleListProps> {
@@ -35,6 +37,7 @@ export class ArticleAdmin extends React.Component<ArticleListProps> {
 		this.injected.articles.tag = this.props.match.params.tag;
 		this.injected.articles.loadArticleList()
 	}
+
 	componentWillReceiveProps(nextProps: Readonly<ArticleListProps>, nextContext: any): void {
 		if (this.props.match.params.tag !== nextProps.match.params.tag) {
 			this.injected.articles.tag = nextProps.match.params.tag;
@@ -51,10 +54,11 @@ export class ArticleAdmin extends React.Component<ArticleListProps> {
 						{article.name}
 					</span>
 				</h3>
-				<div className="btns">
-					<button className="btn" onClick={this.injected.articles.goToEdit.bind(null, article)}>edit</button>
-					<button className="btn" onClick={this.injected.articles.deleteArticle.bind(null, article)}>delete</button>
-				</div>
+				{this.injected.user.isAdmin && <div className="btns">
+                    <button className="btn" onClick={this.injected.articles.goToEdit.bind(null, article)}>edit</button>
+                    <button className="btn" onClick={this.injected.articles.deleteArticle.bind(null, article)}>delete
+                    </button>
+                </div>}
 			</div>
 			<div className="post-content">
 				<div className="p_part" dangerouslySetInnerHTML={{__html: converter.makeHtml(article.content)}}>
@@ -84,11 +88,11 @@ export class ArticleAdmin extends React.Component<ArticleListProps> {
 		return (
 			<div className='article-admin'>
 				<div className='main-btns'>
-					{this.injected.user.isAdmin&&<button className='btn btn-new animated fadeInDown' onClick={() => {
+					{this.injected.user.isAdmin && <button className='btn btn-new animated fadeInDown' onClick={() => {
 						this.injected.articles.newArticle()
 					}}>
-						new
-					</button>}
+                        new
+                    </button>}
 				</div>
 				{
 					this.injected.articles.list.map(this.renderCard)
