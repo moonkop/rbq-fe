@@ -18,9 +18,9 @@ export class Articles {
 	tag: string | null = null;
 
 	async loadArticleList() {
-		let route = "/writer/drafts";
+		let route = "/reader/articles";
 		if (this.tag) {
-			route = `/writer/tags/${this.tag}`;
+			route = `/reader/tags/${this.tag}`;
 		}
 		try {
 			articles.list = (await apiAsync({route: route})).payload.list;
@@ -31,7 +31,7 @@ export class Articles {
 
 	async newArticle() {
 		await apiAsync({
-			route: "/writer/draft/new",
+			route: "/writer/articles/new",
 			method: HTTP_REQUEST_METHODS.POST,
 			body: {
 				name: 'newDraft' + articles.newIndex++
@@ -43,7 +43,7 @@ export class Articles {
 
 	deleteArticle(article: Article) {
 		api({
-			route: `/writer/draft/${article.id}`,
+			route: `/writer/article/${article.id}`,
 			method: HTTP_REQUEST_METHODS.DELETE,
 			callback: () => {
 				articles.loadArticleList();

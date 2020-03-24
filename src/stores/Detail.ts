@@ -7,14 +7,14 @@ export class Detail {
 
 	async save() {
 		await apiAsync({
-			route: `/writer/draft/${detail.article.id}`,
+			route: `/writer/article/${detail.article.id}`,
 			method: HTTP_REQUEST_METHODS.PATCH,
 			body:detail.article
 		})
 	};
 
 	async loadEdit(id: string) {
-		detail.article = (await apiAsync({route: `/writer/draft/${id}`})).payload as Article;
+		detail.article = (await apiAsync({route: `/writer/article/${id}`})).payload as Article;
 	}
 }
 
