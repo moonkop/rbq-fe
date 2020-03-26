@@ -8,7 +8,7 @@ import { RootStore } from "../stores";
 import { Detail } from "../stores/Detail";
 import { RouteComponentProps } from "react-router";
 import { converter } from "../utils/utils";
-import { websocketStore } from "../stores/websocket1";
+import { websocketStore } from "../stores/Websocket";
 
 
 declare type ReactMdeTabType = ("write" | "preview")

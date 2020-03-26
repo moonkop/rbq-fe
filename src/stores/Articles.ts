@@ -2,7 +2,7 @@ import { Article } from "../types/Article";
 import { observable } from "mobx";
 import { api, apiAsync, HTTP_REQUEST_METHODS } from "../utils/request";
 import { history } from "../history";
-import { websocketStore } from "./websocket1";
+import { websocketStore } from "./Websocket";
 
 export class Articles {
 	@observable list: Article[] = [];
