@@ -1,7 +1,7 @@
 import React from "react";
-import {inject} from "mobx-react";
-import {RootStore} from "../stores";
-import {User} from "../stores/User"
+import { inject } from "mobx-react";
+import { RootStore } from "../stores";
+import { User } from "../stores/User"
 
 interface LoginProps {
 
@@ -43,9 +43,9 @@ export class Login extends React.Component<LoginProps, LoginState> {
 				</p>
 			</div>
 			<input type="text" className='input-main' value={this.state.name}
-			       onChange={(e) => {
-				       this.setState({name: e.target.value})
-			       }}/>
+				onChange={(e) => {
+					this.setState({ name: e.target.value })
+				}} />
 
 			<button className='btn btn-login' onClick={this.handleLogin}>
 				出发~

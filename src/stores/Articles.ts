@@ -1,7 +1,8 @@
-import {Article} from "../types/Article";
-import {observable} from "mobx";
-import {api, apiAsync, HTTP_REQUEST_METHODS} from "../utils/request";
-import {history} from "../history";
+import { Article } from "../types/Article";
+import { observable } from "mobx";
+import { api, apiAsync, HTTP_REQUEST_METHODS } from "../utils/request";
+import { history } from "../history";
+import { websocketStore } from "./websocket1";
 
 export class Articles {
 	@observable list: Article[] = [];
@@ -16,14 +17,14 @@ export class Articles {
 	}
 	newIndex = 0;
 	tag: string | null = null;
-
 	async loadArticleList() {
-		let route = "/reader/articles";
+		let route = "/articles";
 		if (this.tag) {
-			route = `/reader/tags/${this.tag}`;
+			route = `/tags/${this.tag}`;
 		}
 		try {
-			articles.list = (await apiAsync({route: route})).payload.list;
+			articles.list = (await apiAsync({ route: route })).payload.list;
+			websocketStore.sendMessage('subscribe',{  ids: articles.list.map(item => item.id) })
 		} catch (e) {
 			console.log(e)
 		}
@@ -31,7 +32,7 @@ export class Articles {
 
 	async newArticle() {
 		await apiAsync({
-			route: "/writer/articles/new",
+			route: "/articles/new",
 			method: HTTP_REQUEST_METHODS.POST,
 			body: {
 				name: 'newDraft' + articles.newIndex++
@@ -43,7 +44,7 @@ export class Articles {
 
 	deleteArticle(article: Article) {
 		api({
-			route: `/writer/article/${article.id}`,
+			route: `/article/${article.id}`,
 			method: HTTP_REQUEST_METHODS.DELETE,
 			callback: () => {
 				articles.loadArticleList();

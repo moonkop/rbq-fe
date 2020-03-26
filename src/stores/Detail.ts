@@ -1,20 +1,20 @@
-import {Article} from "../types/Article";
-import {apiAsync, HTTP_REQUEST_METHODS} from "../utils/request";
-import {observable} from "mobx";
+import { Article } from "../types/Article";
+import { apiAsync, HTTP_REQUEST_METHODS } from "../utils/request";
+import { observable } from "mobx";
 
 export class Detail {
-	@observable article: Article = {name: '', id: '', content: '', modified: '', created: "", comments: [],tags:[]}
+	@observable article: Article = { name: '', id: '', content: '', modified: '', created: "", comments: [], tags: [] }
 
 	async save() {
 		await apiAsync({
-			route: `/writer/article/${detail.article.id}`,
+			route: `/article/${detail.article.id}`,
 			method: HTTP_REQUEST_METHODS.PATCH,
-			body:detail.article
+			body: detail.article
 		})
 	};
 
 	async loadEdit(id: string) {
-		detail.article = (await apiAsync({route: `/writer/article/${id}`})).payload as Article;
+		detail.article = (await apiAsync({ route: `/article/${id}` })).payload as Article;
 	}
 }
 
