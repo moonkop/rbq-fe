@@ -44,9 +44,22 @@ export class Navbar extends React.Component<NavbarProps> {
 				{/*</div>*/}
 				{!this.injected.user.name ? <div className="login" onClick={navigateTo.bind(null, '/login')}>
 					Who are you?
-				</div> : <div className="login">
-					{this.injected.user.name}
-				</div>}
+				</div> :
+				<>
+					<div className="login">
+						<div className="name">
+							{this.injected.user.name}
+
+						</div>
+						<button className='btn' onClick={() => {
+							this.injected.user.logout();
+						}
+						}>logout
+						</button>
+					</div>
+
+				</>
+					}
 			</div>
 		</div>;
 	}

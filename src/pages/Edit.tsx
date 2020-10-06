@@ -67,8 +67,9 @@ export class Edit extends React.Component<EditProps, EditStates> {
 		console.log("Edit rendered", this);
 		const { detail } = this.injected;
 
-		return <div>
-			<div>
+		return <div className='page-editArticle'>
+			<div className='top'>
+				<span>title:</span>
 				<input type="text" value={detail.article.name} onChange={(e) => {
 					detail.article.name = e.currentTarget.value;
 				}} />
@@ -89,17 +90,20 @@ export class Edit extends React.Component<EditProps, EditStates> {
 				disablePreview={true}
 			>
 			</ReactMde>
-			<input type="text" onChange={(e) => {
-				detail.article.tags = e.target.value.split(',');
-			}}
-				value={detail.article.tags.join(',')}
-			/>
-			<button onClick={() => {
-				console.log(history);
-				this.injected.detail.save();
-			}}>
-				save
-			</button>
+			<div className="bottom">
+				<input type="text" onChange={(e) => {
+					detail.article.tags = e.target.value.split(',');
+				}}
+				       value={detail.article.tags.join(',')}
+				/>
+				<button className='btn btn-big' onClick={() => {
+					console.log(history);
+					this.injected.detail.save();
+					window.history.back();
+				}}>
+					save
+				</button>
+			</div>
 			<div dangerouslySetInnerHTML={{ __html: this.state.preview }}></div>
 		</div>;
 	}

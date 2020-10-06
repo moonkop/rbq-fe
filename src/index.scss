@@ -19,13 +19,52 @@ body {
     display: flex;
     justify-content: space-between;
   }
+
+}
+*{
+  outline:none
+
 }
 
 .page-login{
   padding: 20px;
-  .input-main{
-
+  .input-main {
+    font-size: 14px;
+    margin: 0 10px;
   }
   .btn-login{
   }
+}
+
+.page-editArticle{
+  padding: 10px;
+  .top{
+    padding: 10px 0;
+    display: flex;
+    flex-direction: row;
+    line-height: 30px;
+    font-size: 16px;
+    input{
+      margin-left: 10px;
+      width: 100px;
+      flex-grow: 1;
+    }
+    .react-mde,mde-header,grip{
+      border-radius: 20px;
+    }
+  }
+  .bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px 0;
+
+    .btn {
+      width: 100px;
+      margin-left: 10px;
+    }
+
+  }
+
+
 }

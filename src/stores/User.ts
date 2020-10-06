@@ -14,6 +14,12 @@ export class User {
 		this.isAdmin = payload.isAdmin;
 		this.name = payload.name;
 	}
+	async logout(){
+		let payload=(await apiAsync({route:'/user/logout'}))
+		console.log(payload);
+		this.name = '';
+		this.isAdmin = false;
+	}
 
 	async getLoginUser() {
 		let payload = (await apiAsync({route: '/user/info'})).payload;
