@@ -10,23 +10,16 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: npm install
-    - run: npm run build 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Deploy to nerdhood.de
+    - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
-      env:
-        USERNAME: my_username
-        HOST: my_host
-        SCRIPT: ~/deployment.sh
-        KEY: ${{ secrets.SSH_DEPLOYMENT_KEY }}
+      with:
+        host: moonkop.com
+        username: root
+        password: ${{ secrets.PASSWORD }}
+        script: |
+            whoami
+            ls -lah
