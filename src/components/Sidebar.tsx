@@ -9,7 +9,7 @@ export class Sidebar extends React.Component {
 						<h3 title=""><a href="/">huahua-w-</a>
 						</h3>
 						<div className="description">
-							<p>今天也是惹不起的一天呢~</p>
+							<p>今天也是惹不起的一天呢~~</p>
 						</div>
 					</div>
 				</div>

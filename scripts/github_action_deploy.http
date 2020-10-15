@@ -1,0 +1,18 @@
+POST https://api.github.com/repos/moonkop/rbq-fe/actions/workflows/node.js.yml/dispatches
+Content-Type: application/json
+Authorization: token {{github_token}}
+
+{
+	"ref":"master"
+}
+###
+
+
+POST https://api.github.com/repos/moonkop/rbq-fe/actions/workflows/build.yml/dispatches
+Content-Type: application/json
+Authorization: token {{github_token}}
+
+{
+  "ref":"master"
+}
+###
