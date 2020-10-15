@@ -16,3 +16,13 @@ jobs:
         node-version: 12.x
     - run: npm install
     - run: CI=false npm run build
+    - name: rsync deployments
+      uses: burnett01/rsync-deployments@4.1
+      with:
+        switches: -avzr --delete
+        path: build/
+        remote_path: /www/wwwroot/rbq.moonkop.com
+        remote_host: moonkop.com
+        remote_port: 22
+        remote_user: root
+        remote_key: ${{ secrets.DEPLOY_KEY }}
