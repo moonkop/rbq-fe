@@ -15,4 +15,5 @@ jobs:
       with:
         node-version: 12.x
     - run: npm install
-    - run: CI=false & npm run build 
+    - run: CI = false
+    - run: npm run build 
