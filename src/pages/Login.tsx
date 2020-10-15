@@ -1,7 +1,7 @@
 import React from "react";
-import {inject} from "mobx-react";
-import {RootStore} from "../stores";
-import {User} from "../stores/User"
+import { inject } from "mobx-react";
+import { RootStore } from "../stores";
+import { User } from "../stores/User"
 
 interface LoginProps {
 
@@ -33,7 +33,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 
 	render() {
 
-		return <div>
+		return <div className='page-login'>
 			<div>
 				<p>
 					(这里有很多不可告人的秘密)
@@ -43,16 +43,16 @@ export class Login extends React.Component<LoginProps, LoginState> {
 				</p>
 			</div>
 			<input type="text" className='input-main' value={this.state.name}
-			       onChange={(e) => {
-				       this.setState({name: e.target.value})
-			       }}/>
+				onChange={(e) => {
+					this.setState({ name: e.target.value })
+				}} />
 
 			<button className='btn btn-login' onClick={this.handleLogin}>
 				出发~
 			</button>
-			<div>
+			<p>
 				（不同的人进去看到的东西也不一样哦
-			</div>
+			</p>
 		</div>;
 	}
 }

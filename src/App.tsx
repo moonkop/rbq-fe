@@ -10,6 +10,7 @@ import {Edit} from "./pages/Edit";
 import "./styles/Anatole.scss"
 import {Navbar} from "./components/Navbar";
 import {Sidebar} from "./components/Sidebar";
+import {Detail} from "./pages/detail";
 
 export const App = () => (
 	<Provider {...rootStore}>
@@ -24,6 +25,7 @@ export const App = () => (
 						<Route path="/edit/:id" component={Edit}/>
 						<Route path="/about" component={About}/>
 						<Route path="/login" component={Login}/>
+						<Route path="/detail/:id" component={Detail}/>
 					</Switch>
 				</Router>
 			</div>

@@ -15,7 +15,7 @@ body {
 }
 
 p {
-  line-height: 1.9em;
+  line-height: 1.2em;
   font-weight: 400;
   font-size: 14px;
 }
@@ -122,11 +122,12 @@ a:hover, a:active {
 }
 
 /*animation ends*/
-.article-admin{
+.article-admin {
   .main-btns {
     margin: 30px;
   }
 }
+
 .content {
   height: auto;
   float: right;
@@ -176,12 +177,31 @@ a:hover, a:active {
     float: right;
 
     .login {
-      padding: 18px 30px;
+      margin: 18px 30px;
       cursor: pointer;
+      position: relative;
+
+      .btn {
+        opacity: 0;
+        transition: 0.3s all;
+        left: 0;
+        top: 0;
+        position: absolute;
+      }
 
       &:hover {
         text-decoration: #4786D6 underline;
         color: #4786D6;
+        opacity: 1;
+
+        .name {
+          transition: 0.3s all;
+          opacity: 0;
+        }
+
+        .btn {
+          opacity: 1
+        }
       }
     }
 
@@ -690,7 +710,6 @@ a.btn {
   outline: 0;
   color: rgba(0, 0, 0, 0.44);
   background: rgba(0, 0, 0, 0);
-  font-size: 14px;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
@@ -700,6 +719,10 @@ a.btn {
   font-style: normal;
   border-radius: 999em;
   transition: 0.3s all;
+  &.btn-big{
+    line-height: 30px;
+    font-size: 16px;
+  }
 }
 
 .btn:hover {
@@ -708,7 +731,6 @@ a.btn {
   outline: 0px;
   color: #464545;
   background: rgba(0, 0, 0, 0);
-  font-size: 14px;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
@@ -718,7 +740,13 @@ a.btn {
   font-style: normal;
   border-radius: 999em;
 }
-
+input {
+  border-radius: 999em;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 16px;
+  line-height: 30px;
+  padding: 0 15px;
+}
 [role="back"] {
   padding: 0.5em 1.25em;
   line-height: 1.666em;
