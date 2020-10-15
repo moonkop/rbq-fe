@@ -11,7 +11,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -21,3 +20,13 @@ jobs:
         node-version: 12.x
     - run: npm install
     - run: npm run build 
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to nerdhood.de
+      uses: appleboy/ssh-action@master
+      env:
+        USERNAME: my_username
+        HOST: my_host
+        SCRIPT: ~/deployment.sh
+        KEY: ${{ secrets.SSH_DEPLOYMENT_KEY }}
