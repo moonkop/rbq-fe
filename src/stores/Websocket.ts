@@ -1,5 +1,6 @@
 import {articles} from "./Articles";
 import {Article} from "../types/Article";
+import {DEFAULT_HOST} from "../utils/request";
 
 export interface WsMessage {
 	id: number,
@@ -12,13 +13,15 @@ export type WsCallback = (reponse: object) => void
 
 export class WebsocketStore {
 	ws: WebSocket
+
 	messageId: number
+
 	messagePool: WsMessage[]
 
 	constructor() {
 		this.messageId = 0;
 		this.messagePool = [];
-		this.ws = new WebSocket('ws://localhost:8080/ws');
+		this.ws = new WebSocket(`ws://${DEFAULT_HOST}/ws`);
 		this.ws.onopen = () => {
 			console.log("ws opened");
 		}

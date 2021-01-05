@@ -35,11 +35,11 @@ interface ApiArgs {
 }
 
 
-export const DEFAULT_HOST = `http://${window.location.host.split(':')[0]  }:8080`;
+export const DEFAULT_HOST = `${window.location.host.split(':')[0]}:8081`;
 
 export function api(
 	{
-		host = DEFAULT_HOST,
+		host = `https://${DEFAULT_HOST}`,
 		route = '',
 		method = HTTP_REQUEST_METHODS.GET,
 		args,
@@ -48,12 +48,12 @@ export function api(
 		callback = NOOP,
 		errCallback = NOOP
 	}: ApiArgs): void {
-	let init: RequestInit = {method, ...options,credentials:"include"}
+	let init: RequestInit = {method, ...options, credentials: "include"}
 	if (body) {
 		init.body = JSON.stringify(body);
 	}
 	let url = host + route;
-	if (args&&Object.keys(args)) {
+	if (args && Object.keys(args)) {
 		url += '?' + buildArgs(args);
 	}
 	let isSuccess = false;
@@ -72,10 +72,10 @@ export function api(
 	});
 }
 
-export function apiAsync(options: ApiArgs):Promise<Response> {
+export function apiAsync(options: ApiArgs): Promise<Response> {
 	return new Promise(((resolve, reject) => {
 		api({
-			callback: resolve,
+			callback   : resolve,
 			errCallback: reject,
 			...options
 		})
