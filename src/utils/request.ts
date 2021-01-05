@@ -34,7 +34,8 @@ interface ApiArgs {
 
 }
 
-export const DEFAULT_HOST = 'http://localhost:8080';
+
+export const DEFAULT_HOST = `http://${window.location.host.split(':')[0]  }8080`;
 
 export function api(
 	{
