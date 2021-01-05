@@ -39,7 +39,7 @@ export const DEFAULT_HOST = `${window.location.host.split(':')[0]}:8081`;
 
 export function api(
 	{
-		host = `https://${DEFAULT_HOST}`,
+		host = `http://${DEFAULT_HOST}`,
 		route = '',
 		method = HTTP_REQUEST_METHODS.GET,
 		args,
