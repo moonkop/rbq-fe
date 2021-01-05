@@ -34,7 +34,7 @@ export class WebsocketStore {
 			switch (type) {
 				case 'update':
 					let article:Article = data.payload;
-					let oldArticle = articles.list.find(item => article.id == item.id);
+					let oldArticle = articles.articleDict[article.id];
 					if (oldArticle) {
 						oldArticle.content = article.content;
 					}

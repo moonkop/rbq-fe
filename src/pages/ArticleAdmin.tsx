@@ -70,12 +70,12 @@ export class ArticleAdmin extends React.Component<ArticleListProps> {
 				<div className="meta">
 					<div className="info"><i className="fa fa-sun-o"></i>
 						<span className="date">{dayjs(article.created).format("YYYY-MM-DD")}</span>
-						<i className="fa fa-comment-o"></i><a href="/post/2015-05-22#disqus_thread">Comments</a>
+						<i className="fa fa-comment-o"></i><a href="javascript:void(0)">Comments</a>
 						<i className="fa fa-tag"></i>
 						{article.tags && article.tags.map(tag => {
-							return <span className="tag" key={tag}
+							return <a className="tag" href="javascript:void(0)" key={tag}
 							             onClick={this.injected.articles.loadByTag.bind(null, tag)}>
-								&nbsp;{tag}</span>
+								&nbsp;{tag}</a>
 						})}
 					</div>
 				</div>
@@ -95,7 +95,7 @@ export class ArticleAdmin extends React.Component<ArticleListProps> {
                     </button>}
 				</div>
 				{
-					this.injected.articles.list.map(this.renderCard)
+					this.injected.articles.getArticleList().map(this.renderCard)
 				}
 
 			</div>
